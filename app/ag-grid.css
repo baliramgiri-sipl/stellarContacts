@@ -1,0 +1,63 @@
+.ag-menu.ag-ltr.ag-popup-child {
+    background: #fff;
+    color: #000;
+}
+
+.ag-watermark,
+.ag-opacity-zero,
+.ag-hidden {
+    opacity: 0 !important;
+    display: none !important;
+}
+.ag-cell-wrapper {
+    height: 100%;
+    font-size: 10px;
+}
+
+.ag-cell.ag-cell-not-inline-editing.ag-cell-normal-height.ag-cell-value {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    font-size: 14px;
+}
+.ag-header-cell-comp-wrapper .ag-icon {
+    color: #00c14a;
+}
+.ag-root-wrapper {
+   border-radius: 10px;
+}
+
+.ag-paging-button .ag-icon {
+    color: #000;
+}
+
+.ag-header-container,
+.ag-header-cell-label {
+    background: #edffed;
+
+    color: #000;
+    padding: 0;
+     
+}
+.ag-root-wrapper{ 
+    /* border: none; */
+}
+.ag-header-cell-menu-button:not(.ag-header-menu-always-show) {
+    opacity: 1 !important;
+    color: #F2822A;
+    cursor: pointer;
+}
+
+.ag-theme-alpine{
+    /* Changes the color of the grid text */
+    --ag-foreground-color: rgb(56, 145, 14) !important;
+    /* Changes the color of the grid background */
+    --ag-background-color: rgb(255, 255, 255) !important;
+    /* Changes the header color of the top row */
+    --ag-header-background-color: rgb(228, 250, 228) !important;
+    /* Changes the hover color of the row*/
+    --ag-row-hover-color: rgba(51, 255, 0, 0.1) !important;
+    --ag-row-border-style: dashed !important;
+    --ag-row-border-width: 1px !important;
+    --ag-row-border-color: rgb(150, 150, 200) !;
+}
