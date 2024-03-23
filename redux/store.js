@@ -2,6 +2,7 @@ import { combineReducers, createStore } from "redux";
 import storage from "redux-persist/lib/storage";
 import { persistReducer, persistStore } from "redux-persist";
 import { authReducer } from "./authReducer/authReducer";
+import { contactReducer } from "./contactReducer/contactReducer";
 
 
 // Configuration for redux-persist
@@ -12,7 +13,8 @@ const persistConfig = {
 };
 
 const rootReducers = combineReducers({
-  authReducer
+  authReducer,
+  contactReducer
 });
 // Create a persisted reducer
 const persistedReducer = persistReducer(persistConfig, rootReducers);

@@ -41,7 +41,7 @@ const LoginForm = () => {
                         //store info 
                         dispatch({ type: UPDATE_USER_INFO, payload: data.data })
                         dispatch({ type: UPDATE_USER_ACCESS, payload: data.data?.user_type_id })
-                        window.location.href = "/"
+                        window.location.href = "/contacts"
                     })
                 })
 

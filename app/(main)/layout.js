@@ -4,7 +4,7 @@ import Header from '@/components/Header/Header'
 import { Theme } from '@radix-ui/themes'
 import dynamic from 'next/dynamic'
 const ReduxStore = dynamic(() => import('@/Providers/ReduxStore'), { ssr: false })
-
+import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ['latin'] })
 
 export const metadata = {
@@ -18,6 +18,7 @@ export default function RootLayout({ children }) {
             <body className={inter.className}>
                 <ReduxStore >
                     <Theme>
+                        <Toaster />
                         <Header />
                         <main className='my-8'>
                             {children}

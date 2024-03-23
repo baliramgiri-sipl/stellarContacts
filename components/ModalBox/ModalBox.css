@@ -1,0 +1,28 @@
+.b_modal_box {
+    width: 100%;
+    background: rgba(31, 31, 31, 0.086);
+    height: 100vh;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.b_modal_content {
+    animation: scaleUp 0.25s;
+}
+
+@keyframes scaleUp {
+    0% {
+        opacity: 0;
+        transform: scale(0);
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}

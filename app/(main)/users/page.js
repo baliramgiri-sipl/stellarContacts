@@ -1,5 +1,6 @@
 import React from 'react'
 import UsersData from './DataTable/UsersData'
+import { EmailLayout } from '../contacts/EmailLayout/EmailLayout'
 
 export const metadata = {
     title: 'Users',
@@ -10,7 +11,8 @@ export const metadata = {
 const Users = () => {
     return (
         <section className='container'>
-            <UsersData />
+            {/* <UsersData /> */}
+            {/* <EmailLayout /> */}
         </section>
     )
 }

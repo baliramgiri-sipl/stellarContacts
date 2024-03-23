@@ -14,16 +14,16 @@ const Header = () => {
     const links = useMemo(
         () => [
             {
+                link: "/contacts",
+                lable: "Contacts",
+            },
+            {
                 link: "/users",
                 lable: "Users",
             },
             {
                 link: "/websites",
                 lable: "Websites",
-            },
-            {
-                link: "/contacts",
-                lable: "Contacts",
             },
         ],
         []

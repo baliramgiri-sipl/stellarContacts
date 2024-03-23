@@ -2,7 +2,7 @@ import React from 'react'
 import { X } from 'lucide-react';
 const InputSearchGloble = ({ onChange, value, width = 100 }) => {
     return (
-        <div style={{ width: `${width}%` }} className="example-wrapper ms-auto my-1 border rounded-md p-0.5 shadow-sm ">
+        <div style={{ width: `${width}%` }} className="example-wrapper my-1 border border-green-200 rounded-md p-0.5 shadow-sm ">
             <div className="example-header flex">
                 <input
                     type="text"

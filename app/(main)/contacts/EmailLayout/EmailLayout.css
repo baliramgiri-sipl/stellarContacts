@@ -1,0 +1,9 @@
+.b_messages_box::-webkit-scrollbar{
+  width: 5px;
+  /* margin-left: 10px; */
+}
+.b_messages_box::-webkit-scrollbar-thumb{
+ background: rgb(187 247 210 / 84%);
+ border-radius: 10px;
+ padding-left: 5px;
+}

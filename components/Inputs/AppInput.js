@@ -183,12 +183,12 @@ const AppInput = ({
       return (
         <div className="flex flex-col gap-1 ">
           {label && <MyLabel name={name} label={label} required={required} />}
-          {edit ? <div className={`border rounded-md flex items-center justify-between ${endIcon ? "pe-2" : ""}`}>
+          {edit ? <div className={`border-green-200 border rounded-md flex items-center justify-between ${endIcon ? "pe-2" : ""}`}>
             {startIcon}{" "}
             <input
               disabled={disabled}
               className={`${endIcon ? "w-[97%]" : "w-full"
-                } p-1.5 rounded-md  focus:outline-none placeholder:text-neutral-600 text-b-sm `}
+                } p-1.5 rounded-md  focus:outline-none placeholder:text-neutral-600 text-b-sm  `}
               type={type}
               placeholder={placeholder}
               {...register(name, { onChange: (e) => onChange && onChange(e) })}
