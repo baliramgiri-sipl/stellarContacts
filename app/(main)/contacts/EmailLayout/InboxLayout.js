@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 import ButtonGroup from "@/components/ButtonGroup/ButtonGroup";
 import { Button } from "@radix-ui/themes";
-import { momentTime } from '@/lib/helpers';
+import { getSelectedTitle, momentTime } from '@/lib/helpers';
 import InboxSkelton from './Skelton/InboxSkelton';
 import { useMutation } from '@tanstack/react-query';
 import { contactList, contactUpdate } from '../services';
@@ -13,19 +13,15 @@ import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import { useToast } from '@/components/ui/use-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { UPDATE_CONTACT_CONTENT, UPDATE_INBOX_DATA } from '@/redux/contactReducer/contactReducer';
+import useContact from '@/hooks/useContact';
 
 
 const InboxLayout = ({ isLoading = false }) => {
     const dispatch = useDispatch()
-    const { inboxData, content, isAll } = useSelector(state => state?.contactReducer)
+    const { inboxData, content, isAll, contactSelectedEmail, contactMenuSelected } = useSelector(state => state?.contactReducer)
     const { toast } = useToast()
     const [recordId, setRecordId] = useState(null)
-    //contactlist Load again
-    const { mutateAsync, isLoading: isAllLoading } = useMutation(contactList, {
-        onSuccess(newData) {
-            dispatch({ type: UPDATE_INBOX_DATA, payload: newData })
-        }
-    })
+    const { isAllLoading, mutateAsyncContactList } = useContact()
 
     const { isLoading: isLoadingUpdate, mutate } = useMutation(contactUpdate, {
         onSuccess(updatedData) {
@@ -49,11 +45,14 @@ const InboxLayout = ({ isLoading = false }) => {
     })
 
     const filterHandler = (value) => {
-        if (value === 1) {
-            mutateAsync({ query: "?email=giri71401@gmail.com" })
-        } else {
-            mutateAsync({ query: "?email=giri71401@gmail.com&isRead=0" })
+        if (contactSelectedEmail) {
+            let query = getSelectedTitle(contactMenuSelected, `?email=${contactSelectedEmail}`)
+            if (!value) {
+                query += `&isRead=${value}`
+            }
+            mutateAsyncContactList({ query })
         }
+
     }
     //save context
     const contentHandler = (value) => {

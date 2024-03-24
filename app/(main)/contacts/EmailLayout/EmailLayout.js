@@ -8,10 +8,11 @@ import { useMutation } from "@tanstack/react-query";
 import { contactList } from "../services";
 import { useDispatch, useSelector } from "react-redux";
 import { UPDATE_INBOX_DATA } from "@/redux/contactReducer/contactReducer";
+import { getSelectedTitle } from "@/lib/helpers";
 
 export const EmailLayout = () => {
     const dispatch = useDispatch()
-    const { isAll } = useSelector(state => state?.contactReducer)
+    const { isAll, contactSelectedEmail, contactMenuSelected } = useSelector(state => state?.contactReducer)
     const [isLoading, setIsLoading] = useState(false)
     const { mutateAsync } = useMutation(contactList, {
         onSuccess(data) {
@@ -24,12 +25,16 @@ export const EmailLayout = () => {
     })
 
     useEffect(() => {
-        setIsLoading(true)
-        mutateAsync({ query: "?email=giri71401@gmail.com" }).then(() => {
-            setIsLoading(false)
-        })
+        if (contactSelectedEmail) {
+            setIsLoading(true)
+            let query = getSelectedTitle(contactMenuSelected, `?email=${contactSelectedEmail}`)
+            mutateAsync({ query }).then(() => {
+
+            }).finally(() => setIsLoading(false))
+        }
+
         return () => { }
-    }, [])
+    }, [contactSelectedEmail])
 
     return (
         <div className="border h-[80vh] rounded-md border-green-200  flex shadow-md">

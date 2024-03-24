@@ -13,23 +13,30 @@ import { Button } from '@radix-ui/themes';
 import ContentSkelton from './Skelton/ContentSkelton';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
-import UserAvtar from '@/components/useAvatar/useAvatar';
 import { useMutation } from '@tanstack/react-query';
-import { contactDelete } from '../services';
-import { UPDATE_CONTACT_CONTENT, UPDATE_INBOX_DATA } from '@/redux/contactReducer/contactReducer';
+import { contactDelete, contactUpdate } from '../services';
+import { UPDATE_CONTACT_CONTENT } from '@/redux/contactReducer/contactReducer';
+import { useCountsUpdate } from '@/hooks/useCountsUpdate';
+import UserAvtar from '@/components/useAvatar/UseAvatar';
 
 const ContentLayout = ({ isLoading = true }) => {
     const [ActiveCompoment, setActiveCompoment] = useState(null)
     const dispatch = useDispatch()
-    const { content, inboxData } = useSelector(state => state?.contactReducer)
+    const { content } = useSelector(state => state?.contactReducer)
 
+    //hooks
+    const { onCountsUpdated } = useCountsUpdate()
 
+    //delete
     const { mutateAsync, isLoading: isLoadingDelete } = useMutation(contactDelete, {
         onSuccess(deletedId) {
-            console.log(deletedId)
-            dispatch({ type: UPDATE_CONTACT_CONTENT, payload: null })
-            //update the list of contacts
-            dispatch({ type: UPDATE_INBOX_DATA, payload: inboxData?.filter(({ id }) => deletedId !== id) })
+            onCountsUpdated("Move To Trash", deletedId).then(() => dispatch({ type: UPDATE_CONTACT_CONTENT, payload: null }))
+        }
+    })
+    //update in junk
+    const { mutateAsync: updateJunkMuateAsync, isLoading: isLoadingUpdateJunk } = useMutation(contactUpdate, {
+        onSuccess(updatedData) {
+            onCountsUpdated("Add To Junk", updatedData?.id).then(() => dispatch({ type: UPDATE_CONTACT_CONTENT, payload: null }))
         }
     })
 
@@ -47,6 +54,7 @@ const ContentLayout = ({ isLoading = true }) => {
             title: "Move To Trash"
         },
     ];
+
     const layout3Icons2 = [
         {
             icon: <Reply size={16} />,
@@ -68,15 +76,20 @@ const ContentLayout = ({ isLoading = true }) => {
             case "Move To Trash":
                 await mutateAsync({ contactId: content?.id })
                 break
+            case "Add To Junk":
+                await updateJunkMuateAsync({ values: { isJunk: true }, contactId: content?.id })
+                break
             default:
                 break
         }
         setActiveCompoment(false);
 
     }
+
     if (isLoading) {
         return <ContentSkelton />
     }
+
     if (!content) {
         return <div className="p-2 border-b flex justify-between items-center border-green-200">
             <div className="flex items-center gap-2">
@@ -101,7 +114,7 @@ const ContentLayout = ({ isLoading = true }) => {
                 <div className="flex items-center gap-2">
                     {layout3Icons.map(({ icon, title }, index) => {
                         return <div key={index} onClick={() => handler(title)} className="w-[30px] h-[32px] flex items-center justify-center hover:bg-neutral-100 cursor-pointer rounded-md">
-                            {isLoadingDelete && (title === ActiveCompoment) ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : icon}
+                            {(isLoadingDelete || isLoadingUpdateJunk) && (title === ActiveCompoment) ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : icon}
                         </div>
                     })}
                 </div>

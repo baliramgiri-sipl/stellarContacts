@@ -25,3 +25,20 @@ export const contactDelete = async ({ contactId }) => {
     })
     return data?.data || data
 }
+
+export const contactCountsList = async ({ email }) => {
+    const { data } = await myAxios.get(`/contact/counts?email=${email}`, {
+        headers: {
+            'Authorization': `Bearer ${getCookie("access_token")}`,
+        }
+    })
+    return data?.data || data
+}
+export const contactEmails = async () => {
+    const { data } = await myAxios.get(`/website/email/list`, {
+        headers: {
+            'Authorization': `Bearer ${getCookie("access_token")}`,
+        }
+    })
+    return data?.data || data
+}
