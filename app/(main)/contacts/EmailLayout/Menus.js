@@ -10,6 +10,7 @@ import {
 import {
     ArchiveRestore,
     File,
+    Globe,
     Inbox,
     Mail,
     MessagesSquare,
@@ -20,7 +21,7 @@ import {
 } from "lucide-react";
 import { MenuSkelton } from "./Skelton/MenuSkelton";
 import { useMutation } from "@tanstack/react-query";
-import { contactCountsList, contactEmails } from "../services";
+import { contactCountsList, contactWebsite } from "../services";
 import { useDispatch, useSelector } from "react-redux";
 import { UPDATE_CONTACT_COUNTS, UPDATE_CONTACT_MENU_SELECTED, UPDATE_CONTACT_SELECTED_EMAIL } from "@/redux/contactReducer/contactReducer";
 import useContact from "@/hooks/useContact";
@@ -28,7 +29,7 @@ import { getSelectedTitle } from "@/lib/helpers";
 
 const Menus = ({ isLoading = false }) => {
     const dispatch = useDispatch()
-    const { contactCounts, contactSelectedEmail, contactMenuSelected, isAll } = useSelector(state => state.contactReducer)
+    const { contactCounts, contactSelectedWebsite, contactMenuSelected, isAll } = useSelector(state => state.contactReducer)
     const { mutateAsyncContactList } = useContact()
 
     const { mutateAsync, isLoading: isLoadingCountLoad } = useMutation(contactCountsList, {
@@ -38,11 +39,11 @@ const Menus = ({ isLoading = false }) => {
         }
     })
 
-    const { mutateAsync: mutateAsyncEmails, isLoading: isLoadingEmails, data: dataEmailList } = useMutation(contactEmails, {
+    const { mutateAsync: mutateAsyncWebsiteList, isLoading: isLoadingWebsiteList, data: dataEmailList } = useMutation(contactWebsite, {
         onSuccess([data]) {
             //set data for coun
             if (data?.name) {
-                mutateAsync({ email: data?.name })
+                mutateAsync({ website: data?.name })
                 dispatch({ type: UPDATE_CONTACT_SELECTED_EMAIL, payload: data?.name })
             } else {
                 dispatch({ type: UPDATE_CONTACT_SELECTED_EMAIL, payload: null })
@@ -96,16 +97,20 @@ const Menus = ({ isLoading = false }) => {
 
 
     useEffect(() => {
-        mutateAsyncEmails()
+        mutateAsyncWebsiteList()
     }, [])
 
-    const onSelectHandler = (value) => {
+    const onSelectHandler = async (value) => {
+        //handle count
+        if (value) {
+            await mutateAsync({ website: value })
+        }
         dispatch({ type: UPDATE_CONTACT_SELECTED_EMAIL, payload: value })
     }
 
     //menu handler
     async function onMenuHandler(title) {
-        let query = await getSelectedTitle(title, `?email=${contactSelectedEmail}`)
+        let query = await getSelectedTitle(title, `?website=${contactSelectedWebsite}`)
         if (!isAll) {
             query += `&isRead=${isAll}`
         }
@@ -114,13 +119,13 @@ const Menus = ({ isLoading = false }) => {
 
         mutateAsyncContactList({ query })
     }
-    if (isLoading || isLoadingEmails || isLoadingCountLoad) {
+    if (isLoading || isLoadingWebsiteList || isLoadingCountLoad) {
         return <MenuSkelton />
     }
     return (
         <>
             <div className="border-b border-green-200 p-2">
-                <Select onValueChange={onSelectHandler} defaultValue={contactSelectedEmail || ""}>
+                <Select onValueChange={onSelectHandler} defaultValue={contactSelectedWebsite || ""}>
                     <SelectTrigger className="w-full">
                         <SelectValue placeholder="Select Email" />
                     </SelectTrigger>
@@ -128,7 +133,7 @@ const Menus = ({ isLoading = false }) => {
                         {dataEmailList?.map(({ name }) => {
                             return <SelectItem key={name} value={name}>
                                 <div className="flex items-center gap-3">
-                                    <Mail size={13} />
+                                    <Globe size={13} />
                                     {name}
                                 </div>
                             </SelectItem>

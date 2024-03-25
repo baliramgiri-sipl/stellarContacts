@@ -9,6 +9,9 @@ export const useCountsUpdate = () => {
         let newData = { ...contactCounts }
         let newInboxData = [...inboxData]
         switch (title) {
+            case "Add To Inbox":
+                newData["inbox"] = contactCounts?.inbox + 1
+                break
             case "Move To Trash":
                 newData["trashed"] = contactCounts?.trashed + 1
                 newData["inbox"] = contactCounts?.inbox - 1

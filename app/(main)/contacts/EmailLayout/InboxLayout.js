@@ -14,14 +14,21 @@ import { useToast } from '@/components/ui/use-toast';
 import { useDispatch, useSelector } from 'react-redux';
 import { UPDATE_CONTACT_CONTENT, UPDATE_INBOX_DATA } from '@/redux/contactReducer/contactReducer';
 import useContact from '@/hooks/useContact';
+import useSocket from '@/hooks/useSocket';
+import { useCountsUpdate } from '@/hooks/useCountsUpdate';
+import SearchInput from './SearchInput';
 
 
 const InboxLayout = ({ isLoading = false }) => {
     const dispatch = useDispatch()
-    const { inboxData, content, isAll, contactSelectedEmail, contactMenuSelected } = useSelector(state => state?.contactReducer)
+    const { inboxData, content, isAll, contactSelectedWebsite, contactMenuSelected } = useSelector(state => state?.contactReducer)
     const { toast } = useToast()
     const [recordId, setRecordId] = useState(null)
     const { isAllLoading, mutateAsyncContactList } = useContact()
+
+    const { onCountsUpdated } = useCountsUpdate()
+    //soket hook
+    const { socket } = useSocket()
 
     const { isLoading: isLoadingUpdate, mutate } = useMutation(contactUpdate, {
         onSuccess(updatedData) {
@@ -45,8 +52,8 @@ const InboxLayout = ({ isLoading = false }) => {
     })
 
     const filterHandler = (value) => {
-        if (contactSelectedEmail) {
-            let query = getSelectedTitle(contactMenuSelected, `?email=${contactSelectedEmail}`)
+        if (contactSelectedWebsite) {
+            let query = getSelectedTitle(contactMenuSelected, `?website=${contactSelectedWebsite}`)
             if (!value) {
                 query += `&isRead=${value}`
             }
@@ -58,6 +65,20 @@ const InboxLayout = ({ isLoading = false }) => {
     const contentHandler = (value) => {
         dispatch({ type: UPDATE_CONTACT_CONTENT, payload: value })
     }
+
+    //socket connection
+    useEffect(() => {
+        if (socket) {
+            socket.on("inboxes", async (data) => {
+                console.log(data, "I from socket")
+                onCountsUpdated("Add To Inbox")
+                dispatch({ type: UPDATE_INBOX_DATA, payload: [data, ...inboxData] })
+            })
+            return () => {
+                socket.off("inboxes");
+            };
+        }
+    }, [socket, inboxData])
 
     if (isLoading) {
         return <InboxSkelton />
@@ -72,14 +93,7 @@ const InboxLayout = ({ isLoading = false }) => {
                 </div>
             </div>
             <div className=" mt-1 h-full">
-                <div className="border mt-3 mx-2 px-2 py-1 rounded-md border-green-200 flex gap-2 items-center">
-                    <Search size={16} className="text-green-500" />
-                    <input
-                        type="text"
-                        placeholder="Search"
-                        className="placeholder:font-normal border-none outline-none flex-1 py-1 text-[13px]"
-                    />
-                </div>
+                <SearchInput />
                 {!isAllLoading && <div className="my-3 overflow-y-auto h-[80%] b_messages_box">
                     {inboxData.map(
                         ({ comment, createdAt, isRead, name, id, ...rest }, index) => {
