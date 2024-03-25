@@ -1,5 +1,6 @@
-import { Bell, Maximize, MessageSquareText } from "lucide-react";
+import { Bell, Maximize } from "lucide-react";
 import React, { useMemo } from "react";
+import Notification from "./Notification";
 
 const NavigationToolBar = () => {
     const iconsData = useMemo(
@@ -16,10 +17,12 @@ const NavigationToolBar = () => {
                 tip: "Maximize Scree ⇧⌘F",
             },
             {
-                icon: <div className="notification relative">
-                    <Bell size={18} />
-                    <div className="absolute right-[-10px] top-[-10px] w-[15px] h-[15px] rounded-full bg-green-500 text-white flex  justify-center items-center text-[6px] font-semibold">1</div>
-                </div>,
+                icon: <Notification>
+                    <div className="notification relative">
+                        <Bell size={18} />
+                        <div className="absolute right-[-10px] top-[-10px] w-[15px] h-[15px] rounded-full bg-green-500 text-white flex  justify-center items-center text-[6px] font-semibold">1</div>
+                    </div>
+                </Notification>,
                 tip: "Notifications",
             },
         ],

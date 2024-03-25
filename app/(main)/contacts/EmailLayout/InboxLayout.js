@@ -21,7 +21,7 @@ import SearchInput from './SearchInput';
 
 const InboxLayout = ({ isLoading = false }) => {
     const dispatch = useDispatch()
-    const { inboxData, content, isAll, contactSelectedWebsite, contactMenuSelected } = useSelector(state => state?.contactReducer)
+    const { inboxData, content, isAll, contactSelectedWebsite, contactMenuSelected, contactSearchInput } = useSelector(state => state?.contactReducer)
     const { toast } = useToast()
     const [recordId, setRecordId] = useState(null)
     const { isAllLoading, mutateAsyncContactList } = useContact()
@@ -57,6 +57,9 @@ const InboxLayout = ({ isLoading = false }) => {
             if (!value) {
                 query += `&isRead=${value}`
             }
+            if (contactSearchInput) {
+                query += `&search=${contactSearchInput}`
+            }
             mutateAsyncContactList({ query })
         }
 
@@ -70,7 +73,6 @@ const InboxLayout = ({ isLoading = false }) => {
     useEffect(() => {
         if (socket) {
             socket.on("inboxes", async (data) => {
-                console.log(data, "I from socket")
                 onCountsUpdated("Add To Inbox")
                 dispatch({ type: UPDATE_INBOX_DATA, payload: [data, ...inboxData] })
             })

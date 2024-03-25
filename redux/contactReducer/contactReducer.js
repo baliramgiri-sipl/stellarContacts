@@ -28,6 +28,10 @@ export const contactReducer = (state = initialState, action) => {
             return {
                 ...state, isAll: action.payload,
             }
+        case UPDATE_CONTACT_SEARCH_INPUT:
+            return {
+                ...state, contactSearchInput: action.payload,
+            }
         case UPDATE_CONTACT_CONTENT:
             return {
                 ...state, content: action.payload,

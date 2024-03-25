@@ -29,7 +29,7 @@ import { getSelectedTitle } from "@/lib/helpers";
 
 const Menus = ({ isLoading = false }) => {
     const dispatch = useDispatch()
-    const { contactCounts, contactSelectedWebsite, contactMenuSelected, isAll } = useSelector(state => state.contactReducer)
+    const { contactCounts, contactSelectedWebsite, contactMenuSelected, isAll, contactSearchInput } = useSelector(state => state.contactReducer)
     const { mutateAsyncContactList } = useContact()
 
     const { mutateAsync, isLoading: isLoadingCountLoad } = useMutation(contactCountsList, {
@@ -111,9 +111,14 @@ const Menus = ({ isLoading = false }) => {
     //menu handler
     async function onMenuHandler(title) {
         let query = await getSelectedTitle(title, `?website=${contactSelectedWebsite}`)
+
         if (!isAll) {
             query += `&isRead=${isAll}`
         }
+        if (contactSearchInput) {
+            query += `&search=${contactSearchInput}`
+        }
+        
         //update title selection
         dispatch({ type: UPDATE_CONTACT_MENU_SELECTED, payload: title })
 

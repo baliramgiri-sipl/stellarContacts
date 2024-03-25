@@ -12,7 +12,7 @@ import { getSelectedTitle } from "@/lib/helpers";
 
 export const EmailLayout = () => {
     const dispatch = useDispatch()
-    const { isAll, contactSelectedWebsite, contactMenuSelected } = useSelector(state => state?.contactReducer)
+    const { isAll, contactSelectedWebsite, contactMenuSelected, contactSearchInput } = useSelector(state => state?.contactReducer)
     const [isLoading, setIsLoading] = useState(false)
     const { mutateAsync } = useMutation(contactList, {
         onSuccess(data) {
@@ -25,14 +25,12 @@ export const EmailLayout = () => {
     })
 
     useEffect(() => {
-        if (contactSelectedWebsite) {
+        if (contactSelectedWebsite && !contactSearchInput) {
             setIsLoading(true)
             let query = getSelectedTitle(contactMenuSelected, `?website=${contactSelectedWebsite}`)
             mutateAsync({ query }).then(() => {
-
             }).finally(() => setIsLoading(false))
         }
-
         return () => { }
     }, [contactSelectedWebsite])
 
