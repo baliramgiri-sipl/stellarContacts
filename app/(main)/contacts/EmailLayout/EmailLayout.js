@@ -4,31 +4,22 @@ import "./EmailLayout.css";
 import Menus from "./Menus";
 import InboxLayout from "./InboxLayout";
 import ContentLayout from "./ContentLayout";
-import { useMutation } from "@tanstack/react-query";
-import { contactList } from "../services";
-import { useDispatch, useSelector } from "react-redux";
-import { UPDATE_INBOX_DATA } from "@/redux/contactReducer/contactReducer";
+import { useSelector } from "react-redux";
 import { getSelectedTitle } from "@/lib/helpers";
+import useContact from "@/hooks/useContact";
 
 export const EmailLayout = () => {
-    const dispatch = useDispatch()
-    const { isAll, contactSelectedWebsite, contactMenuSelected, contactSearchInput } = useSelector(state => state?.contactReducer)
+
+    const { contactSelectedWebsite, contactMenuSelected, contactSearchInput } = useSelector(state => state?.contactReducer)
     const [isLoading, setIsLoading] = useState(false)
-    const { mutateAsync } = useMutation(contactList, {
-        onSuccess(data) {
-            if (isAll === 0) {
-                dispatch({ type: UPDATE_INBOX_DATA, payload: data?.filter(({ isRead }) => !isRead) })
-            } else {
-                dispatch({ type: UPDATE_INBOX_DATA, payload: data })
-            }
-        }
-    })
+    //contactlist Load again
+    const { mutateAsyncContactList } = useContact()
 
     useEffect(() => {
         if (contactSelectedWebsite && !contactSearchInput) {
             setIsLoading(true)
             let query = getSelectedTitle(contactMenuSelected, `?website=${contactSelectedWebsite}`)
-            mutateAsync({ query }).then(() => {
+            mutateAsyncContactList({ query }).then(() => {
             }).finally(() => setIsLoading(false))
         }
         return () => { }

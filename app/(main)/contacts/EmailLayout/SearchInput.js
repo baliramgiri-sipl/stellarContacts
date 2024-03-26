@@ -19,7 +19,7 @@ const SearchInput = () => {
             if (contactMenuSelected === "Trash") {
                 query += `&isSoftDeleted=true`
             }
-            await mutateAsyncContactList({ query })
+            await mutateAsyncContactList({ query, page: 1 })
         }
     }
 
@@ -48,7 +48,7 @@ const SearchInput = () => {
                             break
                     }
                 }
-                await mutateAsyncContactList({ query })
+                await mutateAsyncContactList({ query, page: 1 })
             }, 700);
             return () => clearTimeout(searchData)
         }

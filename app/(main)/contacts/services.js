@@ -7,7 +7,7 @@ export const contactList = async ({ query, }) => {
             'Authorization': `Bearer ${getCookie("access_token")}`,
         }
     })
-    return data?.data || data
+    return data || data
 }
 export const contactUpdate = async ({ contactId, values }) => {
     const { data } = await myAxios.put(`/contact/update/${contactId}`, values, {

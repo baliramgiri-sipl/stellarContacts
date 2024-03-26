@@ -8,7 +8,7 @@ import { Button } from "@radix-ui/themes";
 import { getSelectedTitle, momentTime } from '@/lib/helpers';
 import InboxSkelton from './Skelton/InboxSkelton';
 import { useMutation } from '@tanstack/react-query';
-import { contactList, contactUpdate } from '../services';
+import { contactUpdate } from '../services';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import { useToast } from '@/components/ui/use-toast';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,11 +17,12 @@ import useContact from '@/hooks/useContact';
 import useSocket from '@/hooks/useSocket';
 import { useCountsUpdate } from '@/hooks/useCountsUpdate';
 import SearchInput from './SearchInput';
+import Pagination from './Pagination';
 
 
 const InboxLayout = ({ isLoading = false }) => {
     const dispatch = useDispatch()
-    const { inboxData, content, isAll, contactSelectedWebsite, contactMenuSelected, contactSearchInput } = useSelector(state => state?.contactReducer)
+    const { inboxData, content, isAll, contactPaginationData, contactSelectedWebsite, contactMenuSelected, contactSearchInput, } = useSelector(state => state?.contactReducer)
     const { toast } = useToast()
     const [recordId, setRecordId] = useState(null)
     const { isAllLoading, mutateAsyncContactList } = useContact()
@@ -90,14 +91,17 @@ const InboxLayout = ({ isLoading = false }) => {
         <>
             <div className="border-b border-green-200 p-2  flex items-center justify-between">
                 <h6 className="font-medium text-[15px] text-neutral-700">Inbox</h6>
-                <div className="bg-neutral-100 p-1 rounded-md">
-                    <ButtonGroup value={isAll} onChange={filterHandler} />
+                <div className='flex flex-wrap'>
+                    <Pagination />
+                    <div className="bg-neutral-100 p-1 rounded-md">
+                        <ButtonGroup value={isAll} onChange={filterHandler} />
+                    </div>
                 </div>
             </div>
             <div className=" mt-1 h-full">
                 <SearchInput />
-                {!isAllLoading && <div className="my-3 overflow-y-auto h-[80%] b_messages_box">
-                    {inboxData.map(
+                {<div className="my-3 overflow-y-auto h-[80%] b_messages_box">
+                    {!isAllLoading && inboxData?.map(
                         ({ comment, createdAt, isRead, name, id, ...rest }, index) => {
                             return (
                                 <div
@@ -140,17 +144,11 @@ const InboxLayout = ({ isLoading = false }) => {
                             );
                         }
                     )}
-                </div>}
-                {isAllLoading && <div class="my-3 overflow-y-auto h-[80%] b_messages_box animate-pulse">
-                    <div class="border cursor-pointer mx-2 my-2 rounded-md p-2">
-                        <div class="h-4 bg-gray-200 rounded w-full mt-2"></div>
-                        <div class="h-10 bg-gray-200 rounded-full mt-2"></div>
-                    </div>
-                    <div class="border cursor-pointer mx-2 my-2 rounded-md p-2">
-                        <div class="h-4 bg-gray-200 rounded w-full mt-2"></div>
-                        <div class="h-10 bg-gray-200 rounded-full mt-2"></div>
+                    <div ref={contactPaginationData?.scrollRef}>
+                        {isAllLoading && <h4>Loding....</h4>}
                     </div>
                 </div>}
+
             </div>
 
 
