@@ -42,3 +42,12 @@ export const contactWebsite = async () => {
     })
     return data?.data || data
 }
+
+export const contactReplay = async (values) => {
+    const { data } = await myAxios.get(`/contact-reply/create`, values, {
+        headers: {
+            'Authorization': `Bearer ${getCookie("access_token")}`,
+        }
+    })
+    return data?.data || data
+}

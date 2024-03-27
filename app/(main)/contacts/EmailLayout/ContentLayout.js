@@ -14,7 +14,7 @@ import ContentSkelton from './Skelton/ContentSkelton';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useMutation } from '@tanstack/react-query';
-import { contactDelete, contactUpdate } from '../services';
+import { contactDelete, contactReplay, contactUpdate } from '../services';
 import { UPDATE_CONTACT_CONTENT } from '@/redux/contactReducer/contactReducer';
 import { useCountsUpdate } from '@/hooks/useCountsUpdate';
 import UserAvtar from '@/components/useAvatar/UseAvatar';
@@ -33,6 +33,13 @@ const ContentLayout = ({ isLoading = true }) => {
             onCountsUpdated("Move To Trash", deletedId).then(() => dispatch({ type: UPDATE_CONTACT_CONTENT, payload: null }))
         }
     })
+    //send reply
+    const { mutateAsync: mutateAsyncContactReplay, isLoading: isLoadingContactReplay } = useMutation(contactReplay, {
+        onSuccess() {
+          
+        }
+    })
+
     //update in junk
     const { mutateAsync: updateJunkMuateAsync, isLoading: isLoadingUpdateJunk } = useMutation(contactUpdate, {
         onSuccess(updatedData) {
@@ -85,7 +92,7 @@ const ContentLayout = ({ isLoading = true }) => {
         setActiveCompoment(false);
 
     }
-
+console.log(content)
     if (isLoading) {
         return <ContentSkelton />
     }
