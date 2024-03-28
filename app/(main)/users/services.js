@@ -11,8 +11,8 @@ export const usersList = async () => {
 }
 
 //add new product
-export const addProduct = async (values) => {
-    const { data } = await myAxios.post(`/add-product`, values, {
+export const addUser = async (values) => {
+    const { data } = await myAxios.post(`/user/create`, values, {
         headers: {
             'Authorization': `Bearer ${getCookie("access_token")}`,
         }

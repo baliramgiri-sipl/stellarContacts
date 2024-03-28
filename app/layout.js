@@ -5,6 +5,7 @@ import '@radix-ui/themes/styles.css';
 import dynamic from 'next/dynamic'
 dynamic(() => import('ag-grid-community/styles/ag-grid.css'), { ssr: false })
 dynamic(() => import('ag-grid-community/styles/ag-theme-alpine.css'), { ssr: false })
+dynamic(() => import('react-toastify/dist/ReactToastify.css'), { ssr: false })
 // Mandatory CSS required by the grid
 export const metadata = {
   title: 'Create Next App',

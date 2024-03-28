@@ -23,7 +23,7 @@ import { MenuSkelton } from "./Skelton/MenuSkelton";
 import { useMutation } from "@tanstack/react-query";
 import { contactCountsList, contactWebsite } from "../services";
 import { useDispatch, useSelector } from "react-redux";
-import { RESET_CONTACT_SCROLL_VIEW_DATA, UPDATE_CONTACT_COUNTS, UPDATE_CONTACT_MENU_SELECTED, UPDATE_CONTACT_SELECTED_EMAIL, UPDATE_INBOX_DATA } from "@/redux/contactReducer/contactReducer";
+import { RESET_CONTACT_PAGE_VIEW_DATA, UPDATE_CONTACT_COUNTS, UPDATE_CONTACT_MENU_SELECTED, UPDATE_CONTACT_SELECTED_EMAIL, UPDATE_INBOX_DATA } from "@/redux/contactReducer/contactReducer";
 import useContact from "@/hooks/useContact";
 import { getSelectedTitle } from "@/lib/helpers";
 
@@ -102,7 +102,7 @@ const Menus = ({ isLoading = false }) => {
 
     const onSelectHandler = async (value) => {
         //reset the list
-        dispatch({ type: RESET_CONTACT_SCROLL_VIEW_DATA })
+        dispatch({ type: RESET_CONTACT_PAGE_VIEW_DATA })
 
         //handle count
         if (value) {
@@ -113,7 +113,7 @@ const Menus = ({ isLoading = false }) => {
 
     //menu handler
     async function onMenuHandler(title) {
-        dispatch({ type: RESET_CONTACT_SCROLL_VIEW_DATA })
+        dispatch({ type: RESET_CONTACT_PAGE_VIEW_DATA })
         let query = await getSelectedTitle(title, `?website=${contactSelectedWebsite}`)
 
         if (!isAll) {

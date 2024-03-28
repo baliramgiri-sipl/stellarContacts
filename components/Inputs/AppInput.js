@@ -3,6 +3,7 @@ import React from "react";
 import MyLabel from "../Texts/MyLabel";
 import PriceInput from "./PriceInput";
 import ZipInput from "./ZipInput";
+import UsaFormatInput from "./UsaFormatInput";
 
 
 const AppInput = ({
@@ -28,6 +29,7 @@ const AppInput = ({
   trigger,
   setError,
   suffix,
+  className,
   watch
 }) => {
 
@@ -61,7 +63,7 @@ const AppInput = ({
     case "checkbox":
 
       return (
-        <div className="flex items-center gap-1 ">
+        <div className={`${className} flex items-center gap-1 `}>
           <input
             disabled={disabled}
             type="checkbox"
@@ -84,7 +86,7 @@ const AppInput = ({
       return (
         <div className="flex flex-col gap-1 ">
           {label && <MyLabel name={name} label={label} required={required} />}
-         
+
           {errors?.[name] && (
             <span className="text-xs text-red-600">{errors[name].message}</span>
           )}
@@ -93,9 +95,30 @@ const AppInput = ({
     //defualt
     case "number":
       return (
-        <div className="flex flex-col gap-1 ">
+        <div className="flex flex-col gap-1 w-full ">
           {label && <MyLabel name={name} label={label} required={required} />}
-          
+          <div className="border-green-200 border  w-full flex-1 rounded-md">
+            <UsaFormatInput
+              suffix={suffix}
+              placeholder={placeholder}
+              value={watch()[name]}
+              onChange={(value) => {
+                try {
+                  if (!value) {
+                    setError(name, undefined);
+                    setValue(name, "");
+                    trigger(name);
+                  } else {
+                    setValue(name, value);
+                    trigger(name);
+                  }
+                } catch (error) {
+                  console.log("appinput.js", error,)
+                }
+              }}
+            />
+          </div>
+
           {errors?.[name] && (
             <span className="text-xs text-red-600">{errors[name].message}</span>
           )}
@@ -181,14 +204,14 @@ const AppInput = ({
       );
     default:
       return (
-        <div className="flex flex-col gap-1 ">
+        <div className="flex flex-col gap-1 w-full">
           {label && <MyLabel name={name} label={label} required={required} />}
           {edit ? <div className={`border-green-200 border rounded-md flex items-center justify-between ${endIcon ? "pe-2" : ""}`}>
             {startIcon}{" "}
             <input
               disabled={disabled}
               className={`${endIcon ? "w-[97%]" : "w-full"
-                } p-1.5 rounded-md  focus:outline-none placeholder:text-neutral-600 text-b-sm  `}
+                } p-1.5 rounded-md  focus:outline-none placeholder:text-neutral-600 text-b-sm `}
               type={type}
               placeholder={placeholder}
               {...register(name, { onChange: (e) => onChange && onChange(e) })}

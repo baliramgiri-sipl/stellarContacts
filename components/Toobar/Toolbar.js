@@ -3,13 +3,13 @@ import React, { useMemo, useState } from 'react'
 import InputSearchGloble from '../SearchInput/InputSearchGloble'
 import { ModalBox } from '../ModalBox/ModalBox'
 
-const Toolbar = ({ children, modalChildren, modalTitle }) => {
-    const [open, setOpen] = useState(false)
+const Toolbar = ({ children, modalChildren, modalTitle, modalWidth, open, onOpen, onClose }) => {
+
 
     const icons = useMemo(() => [{
         icon: <Plus size={18} />,
         onClick() {
-            setOpen(true)
+            onOpen && onOpen("plus")
         }
     }], [])
 
@@ -20,7 +20,7 @@ const Toolbar = ({ children, modalChildren, modalTitle }) => {
                     {icon}
                 </div>
             })}
-            {open && <ModalBox title={modalTitle} onClose={setOpen} children={modalChildren} />}
+            {open && <ModalBox title={modalTitle} width={modalWidth} onClose={onClose} children={modalChildren} />}
             <InputSearchGloble width={30} onChange={(value) => { }} value={""} />
             {children}
         </div>

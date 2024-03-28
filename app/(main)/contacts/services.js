@@ -17,6 +17,15 @@ export const contactUpdate = async ({ contactId, values }) => {
     })
     return data?.data || data
 }
+export const contactSingle = async ({ contactId }) => {
+    const { data } = await myAxios.get(`/contact/single/${contactId}`, {
+        headers: {
+            'Authorization': `Bearer ${getCookie("access_token")}`,
+        }
+    })
+    return data?.data || data
+}
+
 export const contactDelete = async ({ contactId }) => {
     const { data } = await myAxios.delete(`/contact/delete/${contactId}`, {
         headers: {
@@ -44,7 +53,7 @@ export const contactWebsite = async () => {
 }
 
 export const contactReplay = async (values) => {
-    const { data } = await myAxios.get(`/contact-reply/create`, values, {
+    const { data } = await myAxios.post(`/contact-reply/create`, values, {
         headers: {
             'Authorization': `Bearer ${getCookie("access_token")}`,
         }

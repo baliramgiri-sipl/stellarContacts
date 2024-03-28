@@ -1,5 +1,5 @@
 import React from 'react';
-import { Input } from 'antd';
+import { Input } from '../ui/input';
 
 const UsaFormatInput = ({ onChange, value, placeholder, suffix }) => {
   const handleChange = (e) => {
@@ -30,9 +30,10 @@ const UsaFormatInput = ({ onChange, value, placeholder, suffix }) => {
   };
 
   return (
-    <Input
+    <input
       type='text'
       value={value || ""}
+      className='p-1.5 rounded-md  focus:outline-none placeholder:text-neutral-600 text-b-sm'
       onChange={handleChange}
       placeholder={placeholder || "(XXX) XXX-XXXX"}
       maxLength={14} // Limit the input length to match the formatted USA format

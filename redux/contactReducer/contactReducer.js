@@ -4,8 +4,8 @@ export const UPDATE_CONTACT_CONTENT = "UPDATE_CONTACT_CONTENT"
 export const UPDATE_CONTACT_SELECTED_EMAIL = "UPDATE_CONTACT_SELECTED_EMAIL"
 export const UPDATE_CONTACT_COUNTS = "UPDATE_CONTACT_COUNTS"
 export const UPDATE_CONTACT_SEARCH_INPUT = "UPDATE_CONTACT_SEARCH_INPUT"
-export const UPDATE_CONTACT_SCROLL_VIEW_DATA = "UPDATE_CONTACT_SCROLL_VIEW_DATA"
-export const RESET_CONTACT_SCROLL_VIEW_DATA = "RESET_CONTACT_SCROLL_VIEW_DATA"
+export const UPDATE_CONTACT_PAGE_VIEW_DATA = "UPDATE_CONTACT_PAGE_VIEW_DATA"
+export const RESET_CONTACT_PAGE_VIEW_DATA = "RESET_CONTACT_PAGE_VIEW_DATA"
 export const UPDATE_CONTACT_MENU_SELECTED = "UPDATE_CONTACT_MENU_SELECTED"
 export const UPDATE_USER_ACCESS = "UPDATE_USER_ACCESS"
 
@@ -35,14 +35,15 @@ export const contactReducer = (state = initialState, action) => {
             return {
                 ...state, contactSearchInput: action.payload,
             }
-        case UPDATE_CONTACT_SCROLL_VIEW_DATA:
+        case UPDATE_CONTACT_PAGE_VIEW_DATA:
             return {
                 ...state, contactPaginationData: action.payload,
             }
-        case RESET_CONTACT_SCROLL_VIEW_DATA:
+        case RESET_CONTACT_PAGE_VIEW_DATA:
             return {
                 ...state, contactPaginationData: initialState.contactPaginationData,
-                inboxData: []
+                inboxData: [],
+                content: null
             }
         case UPDATE_CONTACT_CONTENT:
             return {

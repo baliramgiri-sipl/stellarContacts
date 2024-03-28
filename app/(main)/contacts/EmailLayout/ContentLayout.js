@@ -1,5 +1,5 @@
 "use client"
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
     ArchiveRestore,
     EllipsisVertical,
@@ -14,19 +14,29 @@ import ContentSkelton from './Skelton/ContentSkelton';
 import { useDispatch, useSelector } from 'react-redux';
 import moment from 'moment';
 import { useMutation } from '@tanstack/react-query';
-import { contactDelete, contactReplay, contactUpdate } from '../services';
+import { contactDelete, contactReplay, contactSingle, contactUpdate } from '../services';
 import { UPDATE_CONTACT_CONTENT } from '@/redux/contactReducer/contactReducer';
 import { useCountsUpdate } from '@/hooks/useCountsUpdate';
 import UserAvtar from '@/components/useAvatar/UseAvatar';
+import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 
 const ContentLayout = ({ isLoading = true }) => {
     const [ActiveCompoment, setActiveCompoment] = useState(null)
     const dispatch = useDispatch()
-    const { content } = useSelector(state => state?.contactReducer)
-
+    const { content, contactMenuSelected } = useSelector(state => state?.contactReducer)
+    const [comment, setComment] = useState("")
     //hooks
     const { onCountsUpdated } = useCountsUpdate()
-
+    const isDisabled = contactMenuSelected !== "Inbox"
+    //get single contact
+    const { mutateAsync: mutateAsyncContactSingle, isLoading: isLoadingContactSingle } = useMutation(contactSingle, {
+        onSuccess(data) {
+            dispatch({ type: UPDATE_CONTACT_CONTENT, payload: data })
+        },
+        onError() {
+            dispatch({ type: UPDATE_CONTACT_CONTENT, payload: null })
+        }
+    })
     //delete
     const { mutateAsync, isLoading: isLoadingDelete } = useMutation(contactDelete, {
         onSuccess(deletedId) {
@@ -35,8 +45,8 @@ const ContentLayout = ({ isLoading = true }) => {
     })
     //send reply
     const { mutateAsync: mutateAsyncContactReplay, isLoading: isLoadingContactReplay } = useMutation(contactReplay, {
-        onSuccess() {
-          
+        onSuccess(data) {
+            dispatch({ type: UPDATE_CONTACT_CONTENT, payload: { ...content, ContactEmailReply: data } })
         }
     })
 
@@ -92,12 +102,27 @@ const ContentLayout = ({ isLoading = true }) => {
         setActiveCompoment(false);
 
     }
-console.log(content)
-    if (isLoading) {
-        return <ContentSkelton />
+    //send reply
+    const onSubmit = async (e) => {
+        e.preventDefault()
+        const contactEmailId = content?.Website?.ContactEmails?.find(({ is_active }) => is_active)
+        if (contactEmailId) {
+            await mutateAsyncContactReplay({ comment, contactId: String(content?.id), contactEmailId: String(contactEmailId?.id) })
+            setComment("")
+        } else {
+            alert("No Active email found")
+        }
     }
+    useEffect(() => {
+        if (content?.id) {
+            mutateAsyncContactSingle({ contactId: content?.id })
+        }
+    }, [content?.id])
+    console.log(content)
 
-    if (!content) {
+    if (isLoading || isLoadingContactSingle) {
+        return <ContentSkelton />
+    } else if (!content) {
         return <div className="p-2 border-b flex justify-between items-center border-green-200">
             <div className="flex items-center gap-2">
                 {layout3Icons.map(({ icon, title }, index) => {
@@ -161,12 +186,17 @@ console.log(content)
 
             <div className='p-4 text-[12px]   text-neutral-600 font-medium'>
                 {content?.comment}
+                {content?.ContactEmailReply && <div className='text-blue-400'>
+                    {content?.ContactEmailReply?.comment}
+                </div>}
             </div>
+            <form onSubmit={onSubmit}>
+                {!content?.ContactEmailReply && !isDisabled && <div className='absolute bottom-0 p-4 border-t-2 left-0 w-full border-green-200'>
+                    <textarea value={comment} onChange={(e) => setComment(e.target.value)} required placeholder={`Reply ${content?.name}...`} className='border text-sm placeholder:text-sm w-full p-2 rounded-md outline-none'></textarea>
+                    <Button type='submit' disabled={isLoadingContactReplay} className='bg-green-400 cursor-pointer rounded-full'>{isLoadingContactReplay ? <LoadingSpinner /> : "Send"}</Button>
+                </div>}
+            </form>
 
-            <div className='absolute bottom-0 p-4 border-t-2 left-0 w-full border-green-200'>
-                <textarea name="" id="" placeholder={`Reply ${content?.name}...`} className='border placeholder:text-sm w-full p-2 rounded-md outline-none' ></textarea>
-                <Button className='bg-green-400 cursor-pointer rounded-full'>Send</Button>
-            </div>
         </>
     )
 }

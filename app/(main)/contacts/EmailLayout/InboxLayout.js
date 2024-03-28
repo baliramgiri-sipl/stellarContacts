@@ -26,6 +26,7 @@ const InboxLayout = ({ isLoading = false }) => {
     const { toast } = useToast()
     const [recordId, setRecordId] = useState(null)
     const { isAllLoading, mutateAsyncContactList } = useContact()
+    const isDisabled = contactMenuSelected !== "Inbox"
 
     const { onCountsUpdated } = useCountsUpdate()
     //soket hook
@@ -67,6 +68,10 @@ const InboxLayout = ({ isLoading = false }) => {
     }
     //save context
     const contentHandler = (value) => {
+        //if button is disabled
+        if (!isDisabled && !value?.isRead) {
+            mutate({ contactId: value?.id, values: { isRead: true } })
+        }
         dispatch({ type: UPDATE_CONTACT_CONTENT, payload: value })
     }
 
@@ -126,7 +131,7 @@ const InboxLayout = ({ isLoading = false }) => {
                                     <p className="text-[11px] mt-2 font-medium text-neutral-500">
                                         {comment}
                                     </p>
-                                    {!isRead && (
+                                    {!isRead && !isDisabled && (
                                         <Button
                                             onClick={isLoadingUpdate ? undefined : () => {
                                                 setRecordId(id)
