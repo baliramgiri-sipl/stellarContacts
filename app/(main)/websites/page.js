@@ -1,4 +1,5 @@
 import React from 'react'
+import WebsiteData from './DataTable/WebsiteData'
 
 export const metadata = {
     title: 'Websites',
@@ -7,8 +8,8 @@ export const metadata = {
 
 const Websites = () => {
     return (
-        <div>
-            Websites
+        <div  className='container'>
+            <WebsiteData />
         </div>
     )
 }

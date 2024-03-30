@@ -105,11 +105,11 @@ const AppInput = ({
               onChange={(value) => {
                 try {
                   if (!value) {
-                    setError(name, undefined);
                     setValue(name, "");
                     trigger(name);
                   } else {
                     setValue(name, value);
+                    
                     trigger(name);
                   }
                 } catch (error) {

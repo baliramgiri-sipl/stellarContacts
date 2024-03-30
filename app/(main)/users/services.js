@@ -20,10 +20,10 @@ export const addUser = async (values) => {
     return data?.data || data
 }
 
-//edit product
-export const editProduct = async ({ productId }) => {
+//delete
+export const deleteUser = async ({ userId }) => {
 
-    const { data } = await myAxios.get(`/edit-product/${productId}`, {
+    const { data } = await myAxios.delete(`/user/delete/${userId}`, {
         headers: {
             'Authorization': `Bearer ${getCookie("access_token")}`,
         }
@@ -31,10 +31,9 @@ export const editProduct = async ({ productId }) => {
     return data?.data || data
 }
 
-//u[date] product
-export const updateProduct = async ({ productId, value }) => {
-
-    const { data } = await myAxios.post(`/update-product/${productId}`, value, {
+//update user
+export const updateUser = async ({ userId, value }) => {
+    const { data } = await myAxios.put(`/user/update/${userId}`, value, {
         headers: {
             'Authorization': `Bearer ${getCookie("access_token")}`,
         }

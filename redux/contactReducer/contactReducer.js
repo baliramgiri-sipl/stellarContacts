@@ -12,7 +12,7 @@ export const UPDATE_USER_ACCESS = "UPDATE_USER_ACCESS"
 
 const initialState = {
     inboxData: [],
-    isAll: 0,
+    isAll: 1,
     content: null,
     contactCounts: {},
     contactSelectedWebsite: null,

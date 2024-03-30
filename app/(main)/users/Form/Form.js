@@ -5,19 +5,19 @@ import { yupResolver } from "@hookform/resolvers/yup"
 import { loginSchema } from './validation';
 import AppInput from '@/components/Inputs/AppInput';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import { LuEye, LuEyeOff } from 'react-icons/lu';
-import { myAxios, removeEmptyValues, statusHandler } from '@/lib/helpers';
+import { removeEmptyValues, setValues, statusHandler } from '@/lib/helpers';
 import { usersTypeList, websiteList } from '@/lib/globleService';
-import { addUser } from '../services';
+import { addUser, updateUser } from '../services';
 import { UPDATE_USER_MODAL } from '@/redux/userReducer/usersReducer';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 const Form = ({ refetch }) => {
     const [showpass, setShowpass] = useState(false);
     const dispatch = useDispatch()
-    
+    const { userDataInfo } = useSelector(state => state?.usersReducer)
+
     const { register, watch, setError, trigger, setValue, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(loginSchema),
         mode: "onChange",
@@ -30,17 +30,19 @@ const Form = ({ refetch }) => {
     const { mutateAsync: mutateAsyncUserTypeList, data: dataUsersTypeList, isLoading: isLoadingUsersTypeList } = useMutation(usersTypeList)
     const { mutateAsync: mutateAsyncWebsiteList, data: dataWebsiteList, isLoading: isLoadingWebsiteList } = useMutation(websiteList)
 
-    //add new user
-    const { mutateAsync: mutateAsyncAddUser, isLoading: isLoadingAddUser } = useMutation(addUser, { ...statusHandler() })
+    //add new user or update existing user
+    const { mutateAsync: mutateAsyncUser, isLoading: isLoadingUser } = useMutation(userDataInfo ? updateUser : addUser, { ...statusHandler() })
+
 
     const onSubmit = async (value) => {
         await removeEmptyValues(value)
-        await mutateAsyncAddUser(value).then(() => {
+        await mutateAsyncUser(userDataInfo ? { userId: userDataInfo?.id, value } : value).then(() => {
             dispatch({ type: UPDATE_USER_MODAL, payload: false })
             //refetch the user list
             refetch && refetch()
         })
     }
+
     const ShowHideComp = useCallback(
         function () {
             return {
@@ -135,8 +137,15 @@ const Form = ({ refetch }) => {
 
     useEffect(() => {
         mutateAsyncUserTypeList()
-        mutateAsyncWebsiteList()
+        mutateAsyncWebsiteList(true) //show dropdown
     }, [])
+
+    //exist data 
+    useEffect(() => {
+        if (userDataInfo) {
+            setValues(setValue, userDataInfo)
+        }
+    }, [userDataInfo])
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className='px-3'>
@@ -145,8 +154,8 @@ const Form = ({ refetch }) => {
                     return <div key={id} className='w-full lg:w-[45%] xl:w-[32%] mt-2'>  <AppInput watch={watch} trigger={trigger} register={register} setError={setError} setValue={setValue} errors={errors} {...rest} /></div>
                 })}
             </div>
-            <button disabled={isLoadingAddUser} className='bg-green-400 m mt-2 px-5 hover:bg-main-app-secondary/80 rounded-sm text-xs p-1'>
-                {isLoadingAddUser ? <LoadingSpinner /> : "Submit"}
+            <button disabled={isLoadingUser} className='bg-green-400 m mt-2 px-5 hover:bg-main-app-secondary/80 rounded-sm text-xs p-1'>
+                {isLoadingUser ? <LoadingSpinner /> : "Submit"}
             </button>
         </form>
     )

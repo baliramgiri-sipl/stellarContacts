@@ -4,6 +4,7 @@ import { persistReducer, persistStore } from "redux-persist";
 import { authReducer } from "./authReducer/authReducer";
 import { contactReducer } from "./contactReducer/contactReducer";
 import { usersReducer } from "./userReducer/usersReducer";
+import { websiteReducer } from "./websiteReducer/websiteReducer";
 
 
 // Configuration for redux-persist
@@ -16,7 +17,8 @@ const persistConfig = {
 const rootReducers = combineReducers({
   authReducer,
   contactReducer,
-  usersReducer
+  usersReducer,
+  websiteReducer
 });
 // Create a persisted reducer
 const persistedReducer = persistReducer(persistConfig, rootReducers);
