@@ -12,14 +12,16 @@ import { usersTypeList, websiteList } from '@/lib/globleService';
 import { addUser, updateUser } from '../services';
 import { UPDATE_USER_MODAL } from '@/redux/userReducer/usersReducer';
 import { useDispatch, useSelector } from 'react-redux';
+import { useSession } from 'next-auth/react';
 
-const Form = ({ refetch }) => {
+const Form = ({ refetch, isProfile, isEdit = true, defaultData, setEdit }) => {
     const [showpass, setShowpass] = useState(false);
     const dispatch = useDispatch()
+    const session = useSession()
     const { userDataInfo } = useSelector(state => state?.usersReducer)
 
     const { register, watch, setError, trigger, setValue, handleSubmit, formState: { errors } } = useForm({
-        resolver: yupResolver(loginSchema),
+        resolver: yupResolver(loginSchema(isProfile)),
         mode: "onChange",
         defaultValues: {
             is_active: true
@@ -31,15 +33,20 @@ const Form = ({ refetch }) => {
     const { mutateAsync: mutateAsyncWebsiteList, data: dataWebsiteList, isLoading: isLoadingWebsiteList } = useMutation(websiteList)
 
     //add new user or update existing user
-    const { mutateAsync: mutateAsyncUser, isLoading: isLoadingUser } = useMutation(userDataInfo ? updateUser : addUser, { ...statusHandler() })
+    const { mutateAsync: mutateAsyncUser, isLoading: isLoadingUser } = useMutation((userDataInfo || defaultData) ? updateUser : addUser, { ...statusHandler() })
 
 
     const onSubmit = async (value) => {
         await removeEmptyValues(value)
-        await mutateAsyncUser(userDataInfo ? { userId: userDataInfo?.id, value } : value).then(() => {
+        await mutateAsyncUser((userDataInfo || defaultData) ? { userId: defaultData?.id || userDataInfo?.id, value } : value).then(async (data) => {
             dispatch({ type: UPDATE_USER_MODAL, payload: false })
             //refetch the user list
             refetch && refetch()
+            if (isProfile && defaultData) {
+                await session.update(data)
+            }
+            setEdit && setEdit(false)
+
         })
     }
 
@@ -117,7 +124,8 @@ const Form = ({ refetch }) => {
             name: "UserTypeId",
             placeholder: "Select User Type*",
         },
-        {
+        //if it is not setting and isprofile
+        ...(!isProfile ? [{
             id: 6,
             name: "password",
             label: "Password",
@@ -125,7 +133,7 @@ const Form = ({ refetch }) => {
             required: true,
             placeholder: "Password*",
             ...ShowHideComp()
-        },
+        }] : []),
         {
             id: 454,
             name: "is_active",
@@ -133,7 +141,7 @@ const Form = ({ refetch }) => {
             type: "checkbox",
             className: "mt-5"
         }
-    ], [ShowHideComp, dataUsersTypeList, isLoadingUsersTypeList, dataWebsiteList, isLoadingWebsiteList])
+    ], [ShowHideComp, dataUsersTypeList, isLoadingUsersTypeList, dataWebsiteList, isLoadingWebsiteList, isProfile])
 
     useEffect(() => {
         mutateAsyncUserTypeList()
@@ -147,16 +155,22 @@ const Form = ({ refetch }) => {
         }
     }, [userDataInfo])
 
+    useEffect(() => {
+        if (defaultData && isProfile) {
+            setValues(setValue, { ...defaultData, ...(isEdit ? {} : { UserTypeId: defaultData?.UserType?.name, WebsiteId: defaultData?.Website?.name }) })
+        }
+    }, [defaultData, isProfile, isEdit])
+
     return (
         <form onSubmit={handleSubmit(onSubmit)} className='px-3'>
             <div className='items-center gap-3  flex flex-wrap' >
                 {inputs.map(({ id, icon, ...rest }) => {
-                    return <div key={id} className='w-full lg:w-[45%] xl:w-[32%] mt-2'>  <AppInput watch={watch} trigger={trigger} register={register} setError={setError} setValue={setValue} errors={errors} {...rest} /></div>
+                    return <div key={id} className={`w-full lg:w-[45%] ${!isProfile ? "xl:w-[32%]" : ""} mt-2`}>  <AppInput edit={isEdit} watch={watch} trigger={trigger} register={register} setError={setError} setValue={setValue} errors={errors} {...rest} /></div>
                 })}
             </div>
-            <button disabled={isLoadingUser} className='bg-green-400 m mt-2 px-5 hover:bg-main-app-secondary/80 rounded-sm text-xs p-1'>
+            {isEdit && <button disabled={isLoadingUser} className='bg-green-400 m mt-2 text-white px-5 hover:bg-main-app-secondary/80 rounded-sm text-xs p-1'>
                 {isLoadingUser ? <LoadingSpinner /> : "Submit"}
-            </button>
+            </button>}
         </form>
     )
 }

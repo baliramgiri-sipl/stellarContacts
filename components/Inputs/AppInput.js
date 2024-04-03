@@ -65,7 +65,7 @@ const AppInput = ({
       return (
         <div className={`${className} flex items-center gap-1 `}>
           <input
-            disabled={disabled}
+            disabled={!edit || disabled}
             type="checkbox"
             {...register(name, { onChange: (e) => onCheck && onCheck(e) })}
             id={name}
@@ -97,7 +97,7 @@ const AppInput = ({
       return (
         <div className="flex flex-col gap-1 w-full ">
           {label && <MyLabel name={name} label={label} required={required} />}
-          <div className="border-green-200 border  w-full flex-1 rounded-md">
+          {edit ? <div className="border-green-200 border  w-full flex-1 rounded-md">
             <UsaFormatInput
               suffix={suffix}
               placeholder={placeholder}
@@ -109,7 +109,7 @@ const AppInput = ({
                     trigger(name);
                   } else {
                     setValue(name, value);
-                    
+
                     trigger(name);
                   }
                 } catch (error) {
@@ -117,7 +117,7 @@ const AppInput = ({
                 }
               }}
             />
-          </div>
+          </div> : watch && watch(name) || "Na"}
 
           {errors?.[name] && (
             <span className="text-xs text-red-600">{errors[name].message}</span>

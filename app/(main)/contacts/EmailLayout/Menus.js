@@ -57,14 +57,15 @@ const Menus = ({ isLoading = false }) => {
             title: "Inbox",
             count: contactCounts?.inbox,
         },
-        {
-            icon: <File size={16} />,
-            title: "Drafts",
-            count: 0,
-        },
+        // {
+        //     icon: <File size={16} />,
+        //     title: "Drafts",
+        //     count: 0,
+        // },
         {
             icon: <Send size={16} />,
             title: "Sent",
+            count: contactCounts?.isSent,
         },
         {
             icon: <PackageX size={16} />,

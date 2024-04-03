@@ -60,7 +60,7 @@ const ContentLayout = ({ isLoading = true }) => {
     const layout3Icons = [
         {
             icon: <ArchiveRestore size={16} />,
-            title: "Add To Archive"
+            title: "Add To Archive",
         },
         {
             icon: <PackageX size={16} />,
@@ -118,14 +118,15 @@ const ContentLayout = ({ isLoading = true }) => {
             mutateAsyncContactSingle({ contactId: content?.id })
         }
     }, [content?.id])
-    console.log(content)
+
 
     if (isLoading || isLoadingContactSingle) {
         return <ContentSkelton />
     } else if (!content) {
         return <div className="p-2 border-b flex justify-between items-center border-green-200">
             <div className="flex items-center gap-2">
-                {layout3Icons.map(({ icon, title }, index) => {
+                {layout3Icons.map(({ icon, title, }, index) => {
+
                     return <div key={index} className="w-[30px] cursor-not-allowed h-[32px] text-neutral-300 flex items-center justify-center hover:bg-neutral-100  rounded-md">
                         {icon}
                     </div>
@@ -145,7 +146,8 @@ const ContentLayout = ({ isLoading = true }) => {
             <div className="p-2 border-b flex justify-between items-center border-green-200">
                 <div className="flex items-center gap-2">
                     {layout3Icons.map(({ icon, title }, index) => {
-                        return <div key={index} onClick={() => handler(title)} className="w-[30px] h-[32px] flex items-center justify-center hover:bg-neutral-100 cursor-pointer rounded-md">
+                        let disabled = title?.split(" ")[2] === contactMenuSelected
+                        return <div key={index} onClick={disabled ? undefined : () => handler(title)} className={`w-[30px] h-[32px] flex items-center justify-center hover:bg-neutral-100 ${disabled ? "bg-neutral-50 text-neutral-400 cursor-not-allowed" : " cursor-pointer"}  rounded-md`}>
                             {(isLoadingDelete || isLoadingUpdateJunk) && (title === ActiveCompoment) ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : icon}
                         </div>
                     })}

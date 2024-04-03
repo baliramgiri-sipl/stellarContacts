@@ -19,6 +19,9 @@ const SearchInput = () => {
             if (contactMenuSelected === "Trash") {
                 query += `&isSoftDeleted=true`
             }
+            if (contactMenuSelected === "Sent") {
+                query += `&isSent=true`
+            }
             await mutateAsyncContactList({ query, page: 1 })
         }
     }
@@ -43,6 +46,9 @@ const SearchInput = () => {
                             break
                         case "Archive":
                             query += `&isArchive=true`
+                            break
+                        case "Sent":
+                            query += `&isSent=true`
                             break
                         default:
                             break

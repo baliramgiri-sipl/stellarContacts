@@ -13,6 +13,7 @@ import { UPDATE_USER_ACCESS, UPDATE_USER_INFO } from "@/redux/authReducer/authRe
 import { persistor } from "@/redux/store";
 import { CircleUserRound, Eye, EyeOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 const LoginForm = () => {
     const [loading, setLoading] = useState(false)
     const [customerror, setCustomerror] = useState(false)
@@ -58,7 +59,7 @@ const LoginForm = () => {
     return (
         <form
             onSubmit={handleSubmit(onSubmit)}
-            className="w-full  space-y-3"
+            className="w-full  space-y-3 "
         >
             {customerror && <ErrorComp message={customerror} type={"error"} />}
             <AppInput
@@ -95,8 +96,11 @@ const LoginForm = () => {
                 placeholder={"Enter Password"}
                 name={"password"}
             />
-            <Button >{loading ? <LoadingSpinner /> : "Login"}</Button>
-            {/* <AppButton title={loading ? <LoadingSpinner /> : "Login"} color="warning" type="submit" /> */}
+            <div className="flex justify-end">
+                <Link href={"/forget-password"} className='text-blue-600 text-xs mt-1 text-end'>Forget Password?</Link>
+            </div>
+            <Button className="w-full py-2 ">{loading ? <LoadingSpinner /> : "Login"}</Button>
+
         </form>
     );
 };

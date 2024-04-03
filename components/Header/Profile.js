@@ -26,15 +26,14 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { TypographySmall } from "../Typegraphy/Typography"
-
-import logo from "@/public/avatar.jpg"
 import Image from "next/image"
 import { signOut, useSession } from "next-auth/react"
 import { persistor } from "@/redux/store"
 import { useHotkeys } from "react-hotkeys-hook"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
-
+import avatarImg from "@/public/avatarPng.png"
+import Link from "next/link"
 export default function DropdownMenuDemo() {
   const { data } = useSession()
   const { push } = useRouter()
@@ -81,8 +80,8 @@ export default function DropdownMenuDemo() {
       <DropdownMenuTrigger asChild>
         <div className="flex flex-wrap items-center gap-2 cursor-pointer hover:text-green-500">
           {/* <UserCircle size={15} /> */}
-          <div className="w-[35px] h-[35px] border rounded-lg p-[1px]">
-            <Image src={logo} className="object-cover w-full h-full rounded-lg" alt="Avatar" />
+          <div className="w-[35px] h-[35px] border rounded-full">
+            <Image src={avatarImg} className="object-cover w-full h-full" alt="Avatar" />
           </div>
           <div className="flex flex-col ">
             <TypographySmall title={`${data?.user?.first_name || ""} ${data?.user?.last_name || ""}`} />
@@ -101,7 +100,7 @@ export default function DropdownMenuDemo() {
           </DropdownMenuItem>
           <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
-            <span>Settings</span>
+            <Link href={"/settings"}><span>Settings</span></Link>
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>

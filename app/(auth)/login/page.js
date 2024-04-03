@@ -1,10 +1,9 @@
 
 import React from 'react'
 import LoginForm from './Form/LoginForm'
-// import logo from "@/public/logo.png"
+import logo from "@/public/stellar_logo.png"
 // import loginImage from "@/public/login.png"
-// import Image from 'next/image'
-import Link from 'next/link'
+import Image from 'next/image'
 
 export const metadata = {
     title: 'Login',
@@ -15,26 +14,19 @@ export const metadata = {
 
 const Login = () => {
     return (
-        <main className='min-h-[100vh] flex items-center loginForm'>
+        <main className='min-h-[100vh] flex items-center loginForm bg-gradient-to-r from-green-300 to-green-500 '>
             <div className='w-[80%] mx-auto justify-between items-center     flex flex-wrap  '>
-                <div className='w-full lg:w-[49%] mt-5 sm:flex sm:justify-center lg:flex-none lg:justify-start'>
-                    <div className='w-full '>
-                        {/* <Image className='my-2 mx-auto' src={loginImage} width={500} alt='login page image' /> */}
-                    </div>
-                </div>
                 {/* <div className='w-[5px] hidden lg:block bg-neutral-100 h-[300px] m-auto'></div> */}
-                <div className='w-full h-[50%] lg:w-[40%] mt-5 '>
+                <div className='w-full h-[50%] lg:w-[30%] mt-5 bg-white border shadow-lg p-4 mx-auto rounded-lg'>
                     <div className='lg:mb-10 mb-5'>
-                        {/* <Image height={250} src={logo} width={250} alt='logo main' /> */}
+                        <Image height={200} src={logo} width={200} alt='logo main' />
                     </div>
                     <div className='mb-4'>
                         <h4 className='text-xl font-semibold'>Login</h4>
                         <p className='text-sm font-light tracking-wider'>login using your email id and password</p>
                     </div>
                     <LoginForm />
-                    <div className='mt-2'>
-                        <Link href={"/forget-password"} className='text-blue-600 text-sm'>Forget Password?</Link>
-                    </div>
+                   
                 </div>
 
             </div>
