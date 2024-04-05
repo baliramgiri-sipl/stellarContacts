@@ -79,8 +79,13 @@ const InboxLayout = ({ isLoading = false }) => {
     useEffect(() => {
         if (socket) {
             socket.on("inboxes", async (data) => {
-                onCountsUpdated("Add To Inbox")
-                dispatch({ type: UPDATE_INBOX_DATA, payload: [data, ...inboxData] })
+                //if user selected contact website then update inbox
+                if (data?.website?.name == contactSelectedWebsite) {
+                    onCountsUpdated("Add To Inbox", undefined, "inbox")
+                    if (contactMenuSelected === "Inbox") {
+                        dispatch({ type: UPDATE_INBOX_DATA, payload: [data, ...inboxData] })
+                    }
+                }
             })
             return () => {
                 socket.off("inboxes");

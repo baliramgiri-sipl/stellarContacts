@@ -5,7 +5,7 @@ export const useCountsUpdate = () => {
     const dispatch = useDispatch()
     const { contactCounts, inboxData } = useSelector(state => state?.contactReducer)
 
-    const onCountsUpdated = async (title, recordid) => {
+    const onCountsUpdated = async (title, recordid, removedKey) => {
         let newData = { ...contactCounts }
         let newInboxData = [...inboxData]
         switch (title) {
@@ -14,7 +14,7 @@ export const useCountsUpdate = () => {
                 break
             case "Move To Trash":
                 newData["trashed"] = contactCounts?.trashed + 1
-                newData["inbox"] = contactCounts?.inbox - 1
+                newData[removedKey] = contactCounts?.[removedKey] - 1
                 //data
                 if (recordid) {
                     newInboxData = inboxData?.filter(({ id }) => recordid !== id)
@@ -22,7 +22,7 @@ export const useCountsUpdate = () => {
                 break
             case "Add To Archive":
                 newData["isArchive"] = contactCounts?.isArchive + 1
-                newData["inbox"] = contactCounts?.inbox - 1
+                newData[removedKey] = contactCounts?.[removedKey] - 1
                 //data
                 if (recordid) {
                     newInboxData = inboxData?.filter(({ id }) => recordid !== id)
@@ -30,7 +30,7 @@ export const useCountsUpdate = () => {
                 break
             case "Add To Junk":
                 newData["isJunk"] = contactCounts?.isJunk + 1
-                newData["inbox"] = contactCounts?.inbox - 1
+                newData[removedKey] = contactCounts?.[removedKey] - 1
                 //data
                 if (recordid) {
                     newInboxData = inboxData?.filter(({ id }) => recordid !== id)

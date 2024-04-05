@@ -1,8 +1,10 @@
 import { Bell, Maximize } from "lucide-react";
 import React, { useMemo } from "react";
 import Notification from "./Notification";
+import useShortKeys from "@/hooks/useShortKeys";
 
 const NavigationToolBar = () => {
+    const { toggleFullscreen } = useShortKeys()
     const iconsData = useMemo(
         () => [
             // {
@@ -13,7 +15,7 @@ const NavigationToolBar = () => {
             //     tip: "Messages",
             // },
             {
-                icon: <Maximize size={15} />,
+                icon: <Maximize onClick={toggleFullscreen} size={15} />,
                 tip: "Maximize Scree ⇧⌘F",
             },
             {
@@ -26,7 +28,7 @@ const NavigationToolBar = () => {
                 tip: "Notifications",
             },
         ],
-        []
+        [toggleFullscreen]
     );
     return (
         <div className="flex items-center gap-3">

@@ -16,7 +16,7 @@ export async function middleware(request) {
 
     if (authRoute) {
         if (accessToken) {
-            return NextResponse.redirect(new URL('/', request.url))
+            return NextResponse.redirect(new URL('/contacts', request.url))
         }
     } else if (!accessToken) {
         return NextResponse.redirect(new URL('/login', request.url))
@@ -25,5 +25,5 @@ export async function middleware(request) {
 
 // See "Matching Paths" below to learn more
 export const config = {
-    matcher: ["/users", "/", "/login", "/websites", "/contacts"],
+    matcher: ["/users", "/login", "/websites", "/contacts"],
 }

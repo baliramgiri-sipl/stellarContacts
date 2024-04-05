@@ -7,10 +7,10 @@ import AppInput from '@/components/Inputs/AppInput';
 import { useMutation } from '@tanstack/react-query';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
 import { removeEmptyValues, setValues, statusHandler } from '@/lib/helpers';
-import { addNewContctEmail } from '../services';
+import { addNewContctEmail, updateContctEmail } from '../services';
 import { websiteList } from '@/lib/globleService';
 
-const Form = ({ refetch, data, setOpenForm, }) => {
+const Form = ({ refetch, data, setOpenForm }) => {
 
     const { register, watch, setError, trigger, setValue, handleSubmit, formState: { errors } } = useForm({
         resolver: yupResolver(ContactEmailSchema),
@@ -22,9 +22,11 @@ const Form = ({ refetch, data, setOpenForm, }) => {
     const { mutateAsync: mutateAsyncWebsiteList, data: dataWebsiteList, isLoading: isLoadingWebsiteList } = useMutation(websiteList)
 
     //add new ContactEmail or update existing ContactEmail
-    const { mutateAsync: mutateAsyncContactEmail, isLoading: isLoadingContactEmail } = useMutation(data ? undefined : addNewContctEmail, { ...statusHandler() })
+    const { mutateAsync: mutateAsyncContactEmail, isLoading: isLoadingContactEmail } = useMutation(data ? updateContctEmail : addNewContctEmail, { ...statusHandler() })
 
-
+    async function updateHandler({ }) {
+        await mutateAsyncUpdate()
+    }
     const onSubmit = async (value) => {
         await removeEmptyValues(value)
         await mutateAsyncContactEmail(data ? { contactEmailId: data?.id, value } : value).then(() => {

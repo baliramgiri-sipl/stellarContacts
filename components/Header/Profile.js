@@ -1,14 +1,7 @@
 "use client"
 import {
-  Keyboard,
-  LifeBuoy,
   LogOut,
-  Mail,
-  MessageSquare,
-  PlusCircle,
   Settings,
-  User,
-  UserPlus,
 } from "lucide-react"
 
 import {
@@ -17,12 +10,8 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuPortal,
   DropdownMenuSeparator,
   DropdownMenuShortcut,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { TypographySmall } from "../Typegraphy/Typography"
@@ -31,13 +20,13 @@ import { signOut, useSession } from "next-auth/react"
 import { persistor } from "@/redux/store"
 import { useHotkeys } from "react-hotkeys-hook"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
 import avatarImg from "@/public/avatarPng.png"
 import Link from "next/link"
+import useShortKeys from "@/hooks/useShortKeys"
 export default function DropdownMenuDemo() {
   const { data } = useSession()
   const { push } = useRouter()
-  const [isFullscreen, setIsFullscreen] = useState(false);
+
   const logout = () => {
     signOut().then(async () => {
       await persistor.purge().then(() => {
@@ -47,29 +36,7 @@ export default function DropdownMenuDemo() {
     })
 
   }
-  const toggleFullscreen = () => {
-    if (!isFullscreen) {
-      // Enter fullscreen
-      if (document.documentElement.requestFullscreen) {
-        document.documentElement.requestFullscreen();
-      } else if (document.documentElement.webkitRequestFullscreen) { /* Safari */
-        document.documentElement.webkitRequestFullscreen();
-      } else if (document.documentElement.msRequestFullscreen) { /* IE11 */
-        document.documentElement.msRequestFullscreen();
-      }
-    } else {
-      // Exit fullscreen
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) { /* Safari */
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) { /* IE11 */
-        document.msExitFullscreen();
-      }
-    }
-    setIsFullscreen(!isFullscreen); // Toggle fullscreen state
-  };
-
+  const { toggleFullscreen } = useShortKeys()
 
   useHotkeys('q', logout)
   useHotkeys('s', () => push('/settings'))
@@ -94,53 +61,11 @@ export default function DropdownMenuDemo() {
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
           <DropdownMenuItem>
-            <User className="mr-2 h-4 w-4" />
-            <span>Profile</span>
-            <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-          </DropdownMenuItem>
-          <DropdownMenuItem>
             <Settings className="mr-2 h-4 w-4" />
             <Link href={"/settings"}><span>Settings</span></Link>
             <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
           </DropdownMenuItem>
-          <DropdownMenuItem>
-            <Keyboard className="mr-2 h-4 w-4" />
-            <span>Keyboard shortcuts</span>
-            <DropdownMenuShortcut>⌘K</DropdownMenuShortcut>
-          </DropdownMenuItem>
         </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuGroup>
-          <DropdownMenuSub>
-            <DropdownMenuSubTrigger>
-              <UserPlus className="mr-2 h-4 w-4" />
-              <span>Invite users</span>
-            </DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem>
-                  <Mail className="mr-2 h-4 w-4" />
-                  <span>Email</span>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <MessageSquare className="mr-2 h-4 w-4" />
-                  <span>Message</span>
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem>
-                  <PlusCircle className="mr-2 h-4 w-4" />
-                  <span>More...</span>
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
-        </DropdownMenuGroup>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <LifeBuoy className="mr-2 h-4 w-4" />
-          <span>Support</span>
-        </DropdownMenuItem>
-        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={logout} className="cursor-pointer">
           <LogOut className="mr-2 h-4 w-4" />
           <span>Log out</span>

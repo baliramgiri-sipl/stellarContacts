@@ -18,6 +18,15 @@ export const addNewContctEmail = async (value) => {
     })
     return data?.data
 }
+//update new contact email
+export const updateContctEmail = async ({ value, contactEmailId }) => {
+    const { data } = await myAxios.put(`/contact-email/update/${contactEmailId}`, value, {
+        headers: {
+            'Authorization': `Bearer ${getCookie("access_token")}`,
+        }
+    })
+    return data?.data || data
+}
 
 //add new contact email
 export const deleteContctEmail = async (id) => {

@@ -19,6 +19,7 @@ import { UPDATE_CONTACT_CONTENT } from '@/redux/contactReducer/contactReducer';
 import { useCountsUpdate } from '@/hooks/useCountsUpdate';
 import UserAvtar from '@/components/useAvatar/UseAvatar';
 import LoadingSpinner from '@/components/LoadingSpinner/LoadingSpinner';
+import { getContentTitle } from '@/lib/helpers';
 
 const ContentLayout = ({ isLoading = true }) => {
     const [ActiveCompoment, setActiveCompoment] = useState(null)
@@ -40,7 +41,7 @@ const ContentLayout = ({ isLoading = true }) => {
     //delete
     const { mutateAsync, isLoading: isLoadingDelete } = useMutation(contactDelete, {
         onSuccess(deletedId) {
-            onCountsUpdated("Move To Trash", deletedId).then(() => dispatch({ type: UPDATE_CONTACT_CONTENT, payload: null }))
+            onCountsUpdated("Move To Trash", deletedId, getContentTitle(contactMenuSelected)).then(() => dispatch({ type: UPDATE_CONTACT_CONTENT, payload: null }))
         }
     })
     //send reply
@@ -53,7 +54,14 @@ const ContentLayout = ({ isLoading = true }) => {
     //update in junk
     const { mutateAsync: updateJunkMuateAsync, isLoading: isLoadingUpdateJunk } = useMutation(contactUpdate, {
         onSuccess(updatedData) {
-            onCountsUpdated("Add To Junk", updatedData?.id).then(() => dispatch({ type: UPDATE_CONTACT_CONTENT, payload: null }))
+            onCountsUpdated("Add To Junk", updatedData?.id, getContentTitle(contactMenuSelected)).then(() => dispatch({ type: UPDATE_CONTACT_CONTENT, payload: null }))
+        }
+    })
+
+    //update in Archives
+    const { mutateAsync: updateArchiveMuateAsync, isLoading: isLoadingUpdateArchive } = useMutation(contactUpdate, {
+        onSuccess(updatedData) {
+            onCountsUpdated("Add To Archive", updatedData?.id, getContentTitle(contactMenuSelected)).then(() => dispatch({ type: UPDATE_CONTACT_CONTENT, payload: null }))
         }
     })
 
@@ -73,18 +81,18 @@ const ContentLayout = ({ isLoading = true }) => {
     ];
 
     const layout3Icons2 = [
-        {
-            icon: <Reply size={16} />,
-            title: "Add To Archive"
-        },
-        {
-            icon: <Forward size={16} />,
-            title: "Add To Junk"
-        },
-        {
-            icon: <EllipsisVertical size={16} />,
-            title: "Move To Trash"
-        },
+        // {
+        //     icon: <Reply size={16} />,
+        //     title: "Add To Archive"
+        // },
+        // {
+        //     icon: <Forward size={16} />,
+        //     title: "Add To Junk"
+        // },
+        // {
+        //     icon: <EllipsisVertical size={16} />,
+        //     title: "Move To Trash"
+        // },
     ];
 
     const handler = async (comp) => {
@@ -94,7 +102,10 @@ const ContentLayout = ({ isLoading = true }) => {
                 await mutateAsync({ contactId: content?.id })
                 break
             case "Add To Junk":
-                await updateJunkMuateAsync({ values: { isJunk: true }, contactId: content?.id })
+                await updateJunkMuateAsync({ values: { isJunk: true, isArchive: false }, contactId: content?.id })
+                break
+            case "Add To Archive":
+                await updateArchiveMuateAsync({ values: { isArchive: true, isJunk: false }, contactId: content?.id })
                 break
             default:
                 break
@@ -146,9 +157,12 @@ const ContentLayout = ({ isLoading = true }) => {
             <div className="p-2 border-b flex justify-between items-center border-green-200">
                 <div className="flex items-center gap-2">
                     {layout3Icons.map(({ icon, title }, index) => {
-                        let disabled = title?.split(" ")[2] === contactMenuSelected
-                        return <div key={index} onClick={disabled ? undefined : () => handler(title)} className={`w-[30px] h-[32px] flex items-center justify-center hover:bg-neutral-100 ${disabled ? "bg-neutral-50 text-neutral-400 cursor-not-allowed" : " cursor-pointer"}  rounded-md`}>
-                            {(isLoadingDelete || isLoadingUpdateJunk) && (title === ActiveCompoment) ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : icon}
+                        let disabled = (title?.split(" ")[2] === contactMenuSelected) || contactMenuSelected === "Trash"
+                        return <div key={index} onClick={disabled ? undefined : () => handler(title)} className={`w-[30px] relative h-[32px] group flex items-center justify-center hover:bg-neutral-100 ${disabled ? "bg-neutral-50 text-neutral-400 cursor-not-allowed" : " cursor-pointer"}  rounded-md`}>
+                            {(isLoadingDelete || isLoadingUpdateJunk || isLoadingUpdateArchive) && (title === ActiveCompoment) ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : icon}
+                            {!disabled && <div className='bg-neutral-800/60 p-2 z-10 rounded-md text-white text-[8px]  font-medium absolute hidden group-hover:block top-[25px] w-[75px] text-center'>
+                                {title}
+                            </div>}
                         </div>
                     })}
                 </div>

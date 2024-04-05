@@ -1,9 +1,9 @@
 import { Inter } from 'next/font/google'
-import '../globals.css'
 import Header from '@/components/Header/Header'
 import { Theme } from '@radix-ui/themes'
 import dynamic from 'next/dynamic'
 const ReduxStore = dynamic(() => import('@/Providers/ReduxStore'), { ssr: false })
+dynamic(() => import('../globals.css'), { ssr: false })
 import { Toaster } from "@/components/ui/toaster"
 const inter = Inter({ subsets: ['latin'] })
 
